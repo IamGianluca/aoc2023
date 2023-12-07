@@ -28,41 +28,40 @@ fn first_digit(s: &str) -> Option<char> {
 }
 
 fn solve_part2(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
-    println!("test case {}", line);
-    let first = first_digit_incl_string(&line, false).unwrap();
+    let first = extract_digits(&line, false).unwrap();
     let reversed: String = line.chars().rev().collect();
-    let last = first_digit_incl_string(&reversed, true).unwrap();
+    let last = extract_digits(&reversed, true).unwrap();
 
     let combined = format!("{}{}", first, last);
     let number: u32 = combined.parse().unwrap();
     Ok(number)
 }
 
-fn first_digit_incl_string(s: &str, reversed: bool) -> Option<char> {
+fn extract_digits(s: &str, reversed: bool) -> Result<char, OutOfRangeError> {
     for i in 0..s.len() {
         let substring: String = if reversed {
-            s[0..i + 1].chars().rev().collect()
+            let res = s.chars().take(i + 1).collect::<String>();
+            res.chars().rev().collect::<String>()
         } else {
-            s[0..i + 1].to_string()
+            s.chars().take(i + 1).collect::<String>()
         };
-        println!("processing {}", substring);
 
-        if s.chars().nth(i).unwrap().is_digit(10) {
-            println!("found digit {}", s.chars().nth(i).unwrap());
-            return s.chars().nth(i);
+        if let Some(c) = s.chars().nth(i) {
+            if c.is_digit(10) {
+                return Ok(c);
+            }
         }
-        match real_solver(&substring) {
+        match parse_written_numbers(&substring) {
             Some(digit) => {
-                println!("found string {}", digit);
-                return Some(digit);
+                return Ok(digit);
             }
             None => continue,
         }
     }
-    None
+    Err(OutOfRangeError)
 }
 
-fn real_solver(s: &str) -> Option<char> {
+fn parse_written_numbers(s: &str) -> Option<char> {
     match s {
         _ if s.contains("one") => Some('1'),
         _ if s.contains("two") => Some('2'),
@@ -80,7 +79,12 @@ fn real_solver(s: &str) -> Option<char> {
 #[derive(Debug, PartialEq)]
 struct OutOfRangeError;
 
-fn main() {}
+fn main() {
+    match solve_puzzle(2) {
+        Ok(sum) => println!("Total: {sum}"),
+        Err(e) => eprintln!("Error: {:?}", e),
+    }
+}
 
 #[cfg(test)]
 mod test {
