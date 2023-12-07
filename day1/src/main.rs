@@ -1,3 +1,5 @@
+use std::fmt;
+
 fn solve_puzzle(part: i8) -> Result<u32, Box<dyn std::error::Error>> {
     let input = std::fs::read_to_string("data.txt")?;
     let mut sum: u32 = 0;
@@ -14,26 +16,26 @@ fn solve_puzzle(part: i8) -> Result<u32, Box<dyn std::error::Error>> {
 }
 
 fn solve_part1(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
-    let first = first_digit(&line).unwrap();
+    let first = first_digit(&line)?;
     let reversed: String = line.chars().rev().collect();
-    let last = first_digit(&reversed).unwrap();
+    let last = first_digit(&reversed)?;
 
     let combined = format!("{}{}", first, last);
-    let number: u32 = combined.parse().unwrap();
+    let number: u32 = combined.parse()?;
     Ok(number)
 }
 
-fn first_digit(s: &str) -> Option<char> {
-    s.chars().find(|c| c.is_digit(10))
+fn first_digit(s: &str) -> Result<char, OutOfRangeError> {
+    s.chars().find(|c| c.is_digit(10)).ok_or(OutOfRangeError)
 }
 
 fn solve_part2(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
-    let first = extract_digits(&line, false).unwrap();
+    let first = extract_digits(&line, false)?;
     let reversed: String = line.chars().rev().collect();
-    let last = extract_digits(&reversed, true).unwrap();
+    let last = extract_digits(&reversed, true)?;
 
     let combined = format!("{}{}", first, last);
-    let number: u32 = combined.parse().unwrap();
+    let number: u32 = combined.parse()?;
     Ok(number)
 }
 
@@ -78,6 +80,16 @@ fn parse_written_numbers(s: &str) -> Option<char> {
 
 #[derive(Debug, PartialEq)]
 struct OutOfRangeError;
+
+// Implementing the Display trait.
+impl fmt::Display for OutOfRangeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Out of range error")
+    }
+}
+
+// Implementing the Error trait.
+impl std::error::Error for OutOfRangeError {}
 
 fn main() {
     match solve_puzzle(2) {
