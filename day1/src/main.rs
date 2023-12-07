@@ -1,34 +1,33 @@
-fn day1(part: i8) -> u32 {
+fn solve_puzzle(part: i8) -> Result<u32, Box<dyn std::error::Error>> {
     let input = std::fs::read_to_string("data.txt").unwrap();
     let mut sum: u32 = 0;
 
     for line in input.lines() {
         let number = if part == 1 {
-            part1_solver(line)
+            solve_part1(line)?
         } else {
-            part2_solver(line)
+            solve_part2(line)?
         };
         sum += number;
     }
-    println!("Total: {sum}");
-    sum
+    Ok(sum)
 }
 
-fn part1_solver(line: &str) -> u32 {
+fn solve_part1(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
     let first = first_digit(&line).unwrap();
     let reversed: String = line.chars().rev().collect();
     let last = first_digit(&reversed).unwrap();
 
     let combined = format!("{}{}", first, last);
     let number: u32 = combined.parse().unwrap();
-    number
+    Ok(number)
 }
 
 fn first_digit(s: &str) -> Option<char> {
     s.chars().find(|c| c.is_digit(10))
 }
 
-fn part2_solver(line: &str) -> u32 {
+fn solve_part2(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
     println!("test case {}", line);
     let first = first_digit_incl_string(&line, false).unwrap();
     let reversed: String = line.chars().rev().collect();
@@ -36,7 +35,7 @@ fn part2_solver(line: &str) -> u32 {
 
     let combined = format!("{}{}", first, last);
     let number: u32 = combined.parse().unwrap();
-    number
+    Ok(number)
 }
 
 fn first_digit_incl_string(s: &str, reversed: bool) -> Option<char> {
@@ -85,44 +84,44 @@ fn main() {}
 
 #[cfg(test)]
 mod test {
-    use crate::{day1, part2_solver};
+    use crate::{solve_part2, solve_puzzle};
 
     #[test]
     fn test_one() {
-        assert_eq!(part2_solver("two1nine"), 29);
+        assert_eq!(solve_part2("two1nine").unwrap(), 29);
     }
     #[test]
     fn test_two() {
-        assert_eq!(part2_solver("eightwothree"), 83);
+        assert_eq!(solve_part2("eightwothree").unwrap(), 83);
     }
     #[test]
     fn test_three() {
-        assert_eq!(part2_solver("abcone2threexyz"), 13);
+        assert_eq!(solve_part2("abcone2threexyz").unwrap(), 13);
     }
     #[test]
     fn test_four() {
-        assert_eq!(part2_solver("xtwone3four"), 24);
+        assert_eq!(solve_part2("xtwone3four").unwrap(), 24);
     }
     #[test]
     fn test_five() {
-        assert_eq!(part2_solver("4nineeightseven2"), 42);
+        assert_eq!(solve_part2("4nineeightseven2").unwrap(), 42);
     }
     #[test]
     fn test_six() {
-        assert_eq!(part2_solver("zoneight234"), 14);
+        assert_eq!(solve_part2("zoneight234").unwrap(), 14);
     }
     #[test]
     fn test_seven() {
-        assert_eq!(part2_solver("7pqrstsixteen"), 76);
+        assert_eq!(solve_part2("7pqrstsixteen").unwrap(), 76);
     }
 
     #[test]
     fn test_part1() {
-        assert_eq!(day1(1), 54_304)
+        assert_eq!(solve_puzzle(1).unwrap(), 54_304)
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(day1(2), 54_418)
+        assert_eq!(solve_puzzle(2).unwrap(), 54_418)
     }
 }
