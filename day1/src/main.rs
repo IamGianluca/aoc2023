@@ -94,26 +94,32 @@ mod test {
     fn test_one() {
         assert_eq!(solve_part2("two1nine").unwrap(), 29);
     }
+
     #[test]
     fn test_two() {
         assert_eq!(solve_part2("eightwothree").unwrap(), 83);
     }
+
     #[test]
     fn test_three() {
         assert_eq!(solve_part2("abcone2threexyz").unwrap(), 13);
     }
+
     #[test]
     fn test_four() {
         assert_eq!(solve_part2("xtwone3four").unwrap(), 24);
     }
+
     #[test]
     fn test_five() {
         assert_eq!(solve_part2("4nineeightseven2").unwrap(), 42);
     }
+
     #[test]
     fn test_six() {
         assert_eq!(solve_part2("zoneight234").unwrap(), 14);
     }
+
     #[test]
     fn test_seven() {
         assert_eq!(solve_part2("7pqrstsixteen").unwrap(), 76);
