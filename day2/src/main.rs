@@ -69,17 +69,6 @@ fn is_valid_scorecard(scorecard: &str) -> Result<bool, Box<dyn std::error::Error
     Ok(true)
 }
 
-// fn solve_part2(scorecard: &str) -> Result<u32, Box<dyn std::error::Error>> {
-//     // return the product of the minimum number of cuber needed for each color to have a valid
-//     // scorecard
-//     let mut sum: u32 = 0;
-//     for line in scorecard.lines() {
-//         let number = solve_part2(line)?;
-//         sum += number;
-//     }
-//     Ok(sum)
-// }
-
 fn solve_part2(scorecard: &str) -> Result<u32, Box<dyn std::error::Error>> {
     //     // return the product of the minimum number of cuber needed for each color to have a valid
     //     // scorecard
