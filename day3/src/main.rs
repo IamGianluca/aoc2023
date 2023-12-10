@@ -25,7 +25,6 @@ fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
     let (max_rows, max_cols) = (schema.len() - 1, schema[0].len() - 1);
     let max_rows: i32 = max_rows as i32;
     let max_cols: i32 = max_cols as i32;
-    println!("maxes {} {}", max_rows, max_cols);
 
     for line in schema.iter() {
         println!("{:?}", line);
@@ -48,20 +47,18 @@ fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
             let y2 = min(max_cols, end + 1) as usize;
             println!("({} x {}), ({} x {})", x1, y1, x2, y2);
 
-            let mut borders: Vec<String> = Vec::new();
+            let mut quadrant: Vec<String> = Vec::new();
             for row_idx in x1..x2 + 1 {
                 let subrow = &schema[row_idx];
                 let string = &subrow;
                 let slice = &string[y1..y2 + 1];
                 println!("--> {:?}", slice);
 
-                borders.push(slice.to_string());
+                quadrant.push(slice.to_string());
             }
 
-            let borders: String = borders.join("");
-            println!("borders: {:?}", borders);
-
-            if contains_symbol(&borders) {
+            let quadrant: String = quadrant.join("");
+            if contains_symbol(&quadrant) {
                 println!("we found a match");
                 let num = mtch.as_str().parse::<u32>()?;
                 sum += num
@@ -72,7 +69,6 @@ fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
 }
 
 fn contains_symbol(s: &str) -> bool {
-    // let symbols = "!@#$%^&*()?+|/=~`{}><";
     let symbols = "#%&*+-/=@$";
     s.chars().any(|c| symbols.contains(*&c))
 }
