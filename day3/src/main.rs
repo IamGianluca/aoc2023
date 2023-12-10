@@ -37,9 +37,9 @@ fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
         println!("{:?}", line);
     }
 
+    let re = Regex::new(r"\d+")?;
     for (i, line) in schema.iter().enumerate() {
         println!("current line no. {}: {}", i, line);
-        let re = Regex::new(r"\d+")?;
         for mtch in re.find_iter(&line) {
             let (start, end) = (mtch.start(), mtch.end() - 1);
             let start = start as i32;
@@ -54,17 +54,17 @@ fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
             let y2 = min(max_cols, end + 1) as usize;
             println!("({} x {}), ({} x {})", x1, y1, x2, y2);
 
-            let mut quadrant: Vec<String> = Vec::new();
+            let mut quadrant_flat: Vec<String> = Vec::new();
             for row_idx in x1..x2 + 1 {
                 let subrow = schema[row_idx];
                 let string = subrow;
                 let slice = &string[y1..y2 + 1];
                 println!("--> {:?}", slice);
 
-                quadrant.push(slice.to_string());
+                quadrant_flat.push(slice.to_string());
             }
 
-            let quadrant: String = quadrant.join("");
+            let quadrant: String = quadrant_flat.join("");
             let symbols = "#%&*+-/=@$";
             if contains_symbol(&quadrant, symbols) {
                 println!("we found a match");
@@ -84,22 +84,16 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
     let mut sum: u32 = 0;
     let mut gears: HashMap<(u32, u32), Vec<u32>> = HashMap::new();
 
-    let (max_rows, max_cols) = (schema.len() - 1, schema[0].len() - 1);
-    let max_rows: i32 = max_rows as i32;
-    let max_cols: i32 = max_cols as i32;
+    let re = Regex::new(r"\d+")?;
+    let re2 = Regex::new(r"\*")?;
 
-    for line in schema.iter() {
-        println!("{:?}", line);
-    }
+    let max_rows = schema.len() as i32 - 1;
+    let max_cols = schema[0].len() as i32 - 1;
 
     for (i, line) in schema.iter().enumerate() {
-        println!("current line no. {}: {}", i, line);
-        let re = Regex::new(r"\d+")?;
         for mtch in re.find_iter(&line) {
-            let (start, end) = (mtch.start(), mtch.end() - 1);
-            let start = start as i32;
-            let end = end as i32;
-            println!("num {}, start {}, end {}", mtch.as_str(), start, end);
+            let start = mtch.start() as i32;
+            let end = mtch.end() as i32 - 1;
 
             // extract borders
             let row_idx: i32 = i as i32;
@@ -107,23 +101,15 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
             let x2 = min(max_rows, row_idx + 1) as usize;
             let y1 = max(0, start - 1) as usize;
             let y2 = min(max_cols, end + 1) as usize;
-            println!("({} x {}), ({} x {})", x1, y1, x2, y2);
+            let x_range = x1..=x2;
+            let y_range = y1..=y2;
 
-            let mut quadrant: Vec<String> = Vec::new();
-            for row_idx in x1..x2 + 1 {
-                let subrow = schema[row_idx];
-                let string = subrow;
-                let slice = &string[y1..y2 + 1];
-                println!("--> {:?}", slice);
-
-                quadrant.push(slice.to_string());
-            }
+            let quadrant: Vec<String> = x_range
+                .map(|x| schema[x as usize][y_range.clone()].to_string())
+                .collect();
 
             let quadrant_flat: String = quadrant.join("");
-            if contains_symbol(&quadrant_flat, "*") {
-                println!("we found a match **");
-                println!("{:?}", quadrant);
-
+            if quadrant_flat.contains("*") {
                 let mut key: Option<(u32, u32)> = None;
                 for (ii, quadrant_row) in quadrant.iter().enumerate() {
                     if contains_symbol(quadrant_row, "*") {
@@ -132,8 +118,7 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
                         let x_coord = x1 + x_delta;
                         let x_coord = x_coord as u32;
 
-                        let re = Regex::new(r"\*")?;
-                        let m = re.find(quadrant_row).ok_or("my mistake");
+                        let m = re2.find(quadrant_row).ok_or("Regex pattern not found");
                         let y_delta = m.unwrap().start() as i32;
                         let y1 = y1 as i32;
                         let y_coord = y1 + y_delta;
@@ -144,9 +129,6 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
                 }
 
                 let num = mtch.as_str().parse::<u32>()?;
-
-                // hacky
-
                 let value = num;
                 println!("key: {:?}, value: {}", key, value);
 
@@ -157,11 +139,9 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
             }
         }
     }
-    for (key, value) in gears.into_iter() {
-        println!("{:?}, {:?}", key, value);
+    for value in gears.values() {
         if value.len() == 2 {
-            let prod: u32 = value.iter().product();
-            sum += prod;
+            sum += value.iter().product::<u32>();
         }
     }
     Ok(sum)
