@@ -239,4 +239,9 @@ mod test {
         schema.push(".664.598..");
         assert_eq!(solve_part2(&schema).unwrap(), 467_835)
     }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(solve_puzzle(2).unwrap(), 75_741_499)
+    }
 }
