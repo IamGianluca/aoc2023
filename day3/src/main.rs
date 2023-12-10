@@ -113,16 +113,11 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
                 let mut key: Option<(u32, u32)> = None;
                 for (ii, quadrant_row) in quadrant.iter().enumerate() {
                     if contains_symbol(quadrant_row, "*") {
-                        let x_delta = ii as i32; // we could use u32, todo: clean up later
-                        let x1 = x1 as i32;
-                        let x_coord = x1 + x_delta;
-                        let x_coord = x_coord as u32;
+                        let x_coord = (x1 + ii) as u32;
 
                         let m = re2.find(quadrant_row).ok_or("Regex pattern not found");
-                        let y_delta = m.unwrap().start() as i32;
-                        let y1 = y1 as i32;
-                        let y_coord = y1 + y_delta;
-                        let y_coord = y_coord as u32;
+                        let y_delta = m.unwrap().start() as usize;
+                        let y_coord = (y1 + y_delta) as u32;
                         key = Some((x_coord, y_coord));
                         break;
                     }
