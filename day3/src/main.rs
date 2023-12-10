@@ -56,8 +56,8 @@ fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
 
             let mut quadrant: Vec<String> = Vec::new();
             for row_idx in x1..x2 + 1 {
-                let subrow = &schema[row_idx];
-                let string = &subrow;
+                let subrow = schema[row_idx];
+                let string = subrow;
                 let slice = &string[y1..y2 + 1];
                 println!("--> {:?}", slice);
 
@@ -111,8 +111,8 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
 
             let mut quadrant: Vec<String> = Vec::new();
             for row_idx in x1..x2 + 1 {
-                let subrow = &schema[row_idx];
-                let string = &subrow;
+                let subrow = schema[row_idx];
+                let string = subrow;
                 let slice = &string[y1..y2 + 1];
                 println!("--> {:?}", slice);
 
@@ -158,7 +158,6 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
         }
     }
     for (key, value) in gears.into_iter() {
-        // todo: if value is shorter than 2, ignore
         println!("{:?}, {:?}", key, value);
         if value.len() == 2 {
             let prod: u32 = value.iter().product();
