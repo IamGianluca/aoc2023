@@ -29,47 +29,33 @@ fn solve_puzzle(part: u8) -> Result<u32, Box<dyn std::error::Error>> {
 fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
     let mut sum: u32 = 0;
 
-    let (max_rows, max_cols) = (schema.len() - 1, schema[0].len() - 1);
-    let max_rows: i32 = max_rows as i32;
-    let max_cols: i32 = max_cols as i32;
-
-    for line in schema.iter() {
-        println!("{:?}", line);
-    }
-
     let re = Regex::new(r"\d+")?;
-    for (i, line) in schema.iter().enumerate() {
-        println!("current line no. {}: {}", i, line);
-        for mtch in re.find_iter(&line) {
-            let (start, end) = (mtch.start(), mtch.end() - 1);
-            let start = start as i32;
-            let end = end as i32;
-            println!("num {}, start {}, end {}", mtch.as_str(), start, end);
 
-            // extract borders
+    let max_rows = schema.len() as i32 - 1;
+    let max_cols = schema[0].len() as i32 - 1;
+
+    for (i, line) in schema.iter().enumerate() {
+        for mtch in re.find_iter(&line) {
+            let start = mtch.start() as i32;
+            let end = mtch.end() as i32 - 1;
+
             let row_idx: i32 = i as i32;
             let x1 = max(0, row_idx - 1) as usize;
             let x2 = min(max_rows, row_idx + 1) as usize;
             let y1 = max(0, start - 1) as usize;
             let y2 = min(max_cols, end + 1) as usize;
-            println!("({} x {}), ({} x {})", x1, y1, x2, y2);
+            let x_range = x1..=x2;
+            let y_range = y1..=y2;
 
-            let mut quadrant_flat: Vec<String> = Vec::new();
-            for row_idx in x1..x2 + 1 {
-                let subrow = schema[row_idx];
-                let string = subrow;
-                let slice = &string[y1..y2 + 1];
-                println!("--> {:?}", slice);
+            let quadrant: Vec<String> = x_range
+                .map(|x| schema[x as usize][y_range.clone()].to_string())
+                .collect();
 
-                quadrant_flat.push(slice.to_string());
-            }
-
-            let quadrant: String = quadrant_flat.join("");
+            let quadrant_flat: String = quadrant.join("");
             let symbols = "#%&*+-/=@$";
-            if contains_symbol(&quadrant, symbols) {
+            if contains_symbol(&quadrant_flat, symbols) {
                 println!("we found a match");
-                let num = mtch.as_str().parse::<u32>()?;
-                sum += num
+                sum += mtch.as_str().parse::<u32>()?;
             }
         }
     }
@@ -95,7 +81,6 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
             let start = mtch.start() as i32;
             let end = mtch.end() as i32 - 1;
 
-            // extract borders
             let row_idx: i32 = i as i32;
             let x1 = max(0, row_idx - 1) as usize;
             let x2 = min(max_rows, row_idx + 1) as usize;
