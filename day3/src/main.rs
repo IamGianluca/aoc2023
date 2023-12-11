@@ -54,7 +54,6 @@ fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
             let quadrant_flat: String = quadrant.join("");
             let symbols = "#%&*+-/=@$";
             if contains_symbol(&quadrant_flat, symbols) {
-                println!("we found a match");
                 sum += mtch.as_str().parse::<u32>()?;
             }
         }
