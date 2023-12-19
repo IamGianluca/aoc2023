@@ -6,7 +6,7 @@ fn main() {
 }
 
 fn solve_puzzle() -> Result<u64, Box<dyn std::error::Error>> {
-    let input = std::fs::read_to_string("data.txt")?;
+    let input = std::fs::read_to_string("day5_data.txt")?;
     let result = solve_part1(&input)?;
     Ok(result)
 }

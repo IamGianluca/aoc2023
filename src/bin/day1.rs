@@ -1,7 +1,7 @@
 use std::fmt;
 
 fn solve_puzzle(part: i8) -> Result<u32, Box<dyn std::error::Error>> {
-    let input = std::fs::read_to_string("data.txt")?;
+    let input = std::fs::read_to_string("day1_data.txt")?;
     let mut sum: u32 = 0;
 
     for line in input.lines() {

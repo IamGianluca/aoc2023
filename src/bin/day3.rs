@@ -13,7 +13,7 @@ fn main() {
 }
 
 fn solve_puzzle(part: u8) -> Result<u32, Box<dyn std::error::Error>> {
-    let input = std::fs::read_to_string("data.txt")?;
+    let input = std::fs::read_to_string("day3_data.txt")?;
     let mut schema = Vec::new();
     for line in input.lines() {
         schema.push(line);

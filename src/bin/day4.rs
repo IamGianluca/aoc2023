@@ -10,7 +10,7 @@ fn main() {
 }
 
 fn solve_puzzle(part: u8) -> Result<u32, Box<dyn std::error::Error>> {
-    let input = std::fs::read_to_string("data.txt")?;
+    let input = std::fs::read_to_string("day4_data.txt")?;
 
     let result = if part == 1 {
         solve_part1(&input)?

@@ -10,7 +10,7 @@ fn main() {
 }
 
 fn solve_puzzle(part: u8) -> Result<u32, Box<dyn std::error::Error>> {
-    let input = std::fs::read_to_string("data.txt")?;
+    let input = std::fs::read_to_string("day2_data.txt")?;
     let mut sum = 0;
 
     for line in input.lines() {
