@@ -19,7 +19,7 @@ fn solve_part1(input: &str) -> Result<u64, Box<dyn std::error::Error>> {
     let seeds: Vec<u64> = extract_numbers(&seed_str);
 
     // create an array with the names of the different mappings we will encounter
-    let xxx = [
+    let mapping_names = [
         "seed-to-soil map:",
         "soil-to-fertilizer map:",
         "fertilizer-to-water map:",
@@ -38,7 +38,7 @@ fn solve_part1(input: &str) -> Result<u64, Box<dyn std::error::Error>> {
         for line in input.lines().skip(2) {
             // note: it is important that this if statement stays at the beginning of this
             // procedure
-            if xxx.iter().any(|&s| s == line) {
+            if mapping_names.iter().any(|&s| s == line) {
                 ignore_flag = 0;
                 continue;
             }
