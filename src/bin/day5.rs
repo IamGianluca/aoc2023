@@ -1,8 +1,14 @@
+use std::time::Instant;
+
 fn main() {
+    let start = Instant::now();
     match solve_puzzle(&2) {
         Ok(result) => println!("Total: {result}"),
         Err(e) => eprintln!("Error: {:?}", e),
     }
+    let end = Instant::now();
+    let elapsed = end - start;
+    println!("Execution time: {elapsed:?}");
 }
 
 fn solve_puzzle(part: &u8) -> Result<u64, Box<dyn std::error::Error>> {
@@ -18,8 +24,8 @@ fn solve_part1(input: &str, part: &u8) -> Result<u64, Box<dyn std::error::Error>
     println!("extracting seeds...");
     let (_, seed_str) = first_line.split_once(":").ok_or("Could not find char :")?;
     let seeds: Vec<u64> = match part {
-        1 => Ok(extract_numbers(&seed_str)),
-        2 => Ok(extract_numbers_part2(&seed_str)),
+        1 => Ok(extract_seeds_part1(&seed_str)),
+        2 => Ok(extract_seeds_part2(&seed_str)),
         _ => Err("only handlig values 1 or 2"),
     }?;
 
@@ -38,17 +44,14 @@ fn solve_part1(input: &str, part: &u8) -> Result<u64, Box<dyn std::error::Error>
         let mut map = Vec::<[u64; 3]>::new();
 
         for line in paragraph.lines() {
-            println!("{:?}", line);
             if line.contains("map") {
                 continue;
             } else {
-                let vec = extract_numbers(line);
-                let arr: [u64; 3] = vec.try_into().ok().ok_or("error")?;
-                map.push(arr);
+                let arr = extract_mappings(line)?;
+                map.push(arr.into());
             }
         }
         maps.push(map);
-        println!("===========")
     }
 
     // solve location for each seed, one at a time
@@ -58,20 +61,16 @@ fn solve_part1(input: &str, part: &u8) -> Result<u64, Box<dyn std::error::Error>
     println!("computing shortest path...");
     for (i, seed) in seeds.iter().enumerate() {
         let progress = (i as f64 / tot as f64) * 100.0;
-        if i % 1_000 == 0 {
-            // For example, print every 10 seeds
+        if i % 1_000_000 == 0 {
             println!("Progress: {:.2}%", progress);
         }
 
         let mut source = *seed;
         for map in &maps {
             for line in map {
-                let [dest_start, source_start, range_length] = line;
+                let [dest_start, min, max] = *line;
 
-                let min = source_start;
-                let max = source_start + range_length;
-
-                if min <= &source && source <= max {
+                if (min..=max).contains(&source) {
                     let offset = source - min;
                     source = dest_start + offset;
                     break;
@@ -86,13 +85,26 @@ fn solve_part1(input: &str, part: &u8) -> Result<u64, Box<dyn std::error::Error>
     Ok(shortest)
 }
 
-fn extract_numbers(text: &str) -> Vec<u64> {
+fn extract_seeds_part1(text: &str) -> Vec<u64> {
     text.split_whitespace()
         .filter_map(|num_str| num_str.parse::<u64>().ok())
         .collect()
 }
 
-fn extract_numbers_part2(text: &str) -> Vec<u64> {
+fn extract_mappings(text: &str) -> Result<(u64, u64, u64), Box<dyn std::error::Error>> {
+    let mut numbers = text.split_whitespace().take(3).map(|s| s.parse::<u64>());
+
+    let dest_start = numbers.next().unwrap_or(Ok(0))?;
+    let source_start = numbers.next().unwrap_or(Ok(0))?;
+    let range_length = numbers.next().unwrap_or(Ok(0))?;
+
+    let min = source_start;
+    let max = source_start + range_length;
+
+    Ok((dest_start, min, max))
+}
+
+fn extract_seeds_part2(text: &str) -> Vec<u64> {
     let nums: Vec<u64> = text
         .split_whitespace()
         .filter_map(|num_str| num_str.parse::<u64>().ok())
