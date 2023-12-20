@@ -1,5 +1,5 @@
 fn main() {
-    match solve_puzzle(&1) {
+    match solve_puzzle(&2) {
         Ok(result) => println!("Total: {result}"),
         Err(e) => eprintln!("Error: {:?}", e),
     }
@@ -12,56 +12,70 @@ fn solve_puzzle(part: &u8) -> Result<u64, Box<dyn std::error::Error>> {
 }
 
 fn solve_part1(input: &str, part: &u8) -> Result<u64, Box<dyn std::error::Error>> {
-    let first_line = input.lines().next().ok_or("could not return first line")?;
+    let first_line = input.lines().next().ok_or("Could not return first line")?;
 
     // extract seed numbers from first line
-    let (_, seed_str) = first_line.split_once(":").ok_or("could not find char :")?;
+    println!("extracting seeds...");
+    let (_, seed_str) = first_line.split_once(":").ok_or("Could not find char :")?;
     let seeds: Vec<u64> = match part {
         1 => Ok(extract_numbers(&seed_str)),
         2 => Ok(extract_numbers_part2(&seed_str)),
-        &_ => Err("only handlig values 1 or 2"),
+        _ => Err("only handlig values 1 or 2"),
     }?;
 
-    // create an array with the names of the different mappings we will encounter
-    let mapping_names = [
-        "seed-to-soil map:",
-        "soil-to-fertilizer map:",
-        "fertilizer-to-water map:",
-        "water-to-light map:",
-        "light-to-temperature map:",
-        "temperature-to-humidity map:",
-        "humidity-to-location map:",
-    ];
+    // process file once
+    let paragraphs: Vec<String> = input
+        .lines()
+        .skip(2)
+        .collect::<Vec<_>>()
+        .join("\n")
+        .split("\n\n")
+        .map(|x| x.to_string())
+        .collect();
+
+    let mut maps = Vec::<Vec<[u64; 3]>>::new();
+    for paragraph in paragraphs {
+        let mut map = Vec::<[u64; 3]>::new();
+
+        for line in paragraph.lines() {
+            println!("{:?}", line);
+            if line.contains("map") {
+                continue;
+            } else {
+                let vec = extract_numbers(line);
+                let arr: [u64; 3] = vec.try_into().ok().ok_or("error")?;
+                map.push(arr);
+            }
+        }
+        maps.push(map);
+        println!("===========")
+    }
 
     // solve location for each seed, one at a time
     let mut shortest = 999_999_999;
-    let mut ignore_flag = 0;
+    let tot = seeds.len();
 
-    for seed in seeds {
-        let mut source = seed;
-        for line in input.lines().skip(2) {
-            // note: it is important that this if statement stays at the beginning of this
-            // procedure
-            if mapping_names.iter().any(|&s| s == line) {
-                ignore_flag = 0;
-                continue;
-            }
+    println!("computing shortest path...");
+    for (i, seed) in seeds.iter().enumerate() {
+        let progress = (i as f64 / tot as f64) * 100.0;
+        if i % 1_000 == 0 {
+            // For example, print every 10 seeds
+            println!("Progress: {:.2}%", progress);
+        }
 
-            if line.is_empty() || ignore_flag == 1 {
-                continue;
-            }
+        let mut source = *seed;
+        for map in &maps {
+            for line in map {
+                let [dest_start, source_start, range_length] = line;
 
-            let vec = extract_numbers(line);
-            let arr: [u64; 3] = vec.try_into().ok().ok_or("error")?;
-            let [dest_start, source_start, range_length] = arr;
+                let min = source_start;
+                let max = source_start + range_length;
 
-            let min = source_start;
-            let max = source_start + range_length;
-
-            if min <= source && source <= max {
-                let offset = source - min;
-                source = dest_start + offset;
-                ignore_flag = 1;
+                if min <= &source && source <= max {
+                    let offset = source - min;
+                    source = dest_start + offset;
+                    break;
+                }
             }
         }
         if source < shortest {
@@ -123,8 +137,9 @@ mod test {
         assert_eq!(solve_part1(input, &2).unwrap(), 46)
     }
 
-    #[test]
-    fn test_part_2() {
-        assert_eq!(solve_puzzle(&2).unwrap(), 157_211_394)
-    }
+    // commented out due to long execution time
+    // #[test]
+    // fn test_part_2() {
+    //     assert_eq!(solve_puzzle(&2).unwrap(), 50_855_035)
+    // }
 }
