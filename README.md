@@ -19,7 +19,7 @@ cargo build --release
 Then, we can run any of the binaries included in the project:
 
 ```bash
-cargo run --bin <binary name>
+target/release/<binary_name>
 ```
 
 # Directory Structure
@@ -37,5 +37,12 @@ cargo test
 Or specify which binary you want to target:
 
 ```bash
-cargo test --bin <binary name>
+cargo test --bin <binary_name>
+```
+
+To profile any of the binaries: 
+
+```bash
+perf record -g --call-graph dwarf target/release/<binary_name>
+perf report
 ```
