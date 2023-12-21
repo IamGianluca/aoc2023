@@ -2,25 +2,31 @@ use std::collections::{HashMap, HashSet};
 
 use regex::Regex;
 
+use std::time::Instant;
+
 fn main() {
-    match solve_puzzle(1) {
-        Ok(sum) => println!("Total: {sum}"),
+    let start = Instant::now();
+    match solve_day4_puzzle(&2) {
+        Ok(result) => println!("Total: {result}"),
         Err(e) => eprintln!("Error: {:?}", e),
     }
+    let end = Instant::now();
+    let elapsed = end - start;
+    println!("Execution time: {elapsed:?}");
 }
 
-fn solve_puzzle(part: u8) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_day4_puzzle(part: &u8) -> Result<u32, Box<dyn std::error::Error>> {
     let input = std::fs::read_to_string("day4_data.txt")?;
 
-    let result = if part == 1 {
-        solve_part1(&input)?
+    let result = if *part == 1 {
+        solve_part1_puzzle(&input)?
     } else {
-        solve_part2(&input)?
+        solve_part2_puzzle(&input)?
     };
     Ok(result)
 }
 
-fn solve_part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_part1_puzzle(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
     let mut sum: u32 = 0;
     for line in input.lines() {
         let n_matches = get_num_matches(line)?;
@@ -34,7 +40,7 @@ fn solve_part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
     Ok(sum)
 }
 
-fn solve_part2(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_part2_puzzle(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
     let mut sum: u32 = 0;
     let mut state = HashMap::<u32, u32>::new();
     for (card_num, line) in input.lines().enumerate() {
@@ -97,57 +103,57 @@ fn get_num_matches(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod test {
-    use crate::{solve_part1, solve_part2, solve_puzzle};
+    use crate::{solve_day4_puzzle, solve_part1_puzzle, solve_part2_puzzle};
 
     #[test]
     fn test_case1_part1() {
         let line = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53";
-        assert_eq!(solve_part1(&line).unwrap(), 8);
+        assert_eq!(solve_part1_puzzle(&line).unwrap(), 8);
     }
 
     #[test]
     fn test_case2_part1() {
         let line = "Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19";
-        assert_eq!(solve_part1(&line).unwrap(), 2);
+        assert_eq!(solve_part1_puzzle(&line).unwrap(), 2);
     }
 
     #[test]
     fn test_case3_part1() {
         let line = "Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1";
-        assert_eq!(solve_part1(&line).unwrap(), 2);
+        assert_eq!(solve_part1_puzzle(&line).unwrap(), 2);
     }
 
     #[test]
     fn test_case4_part1() {
         let line = "Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83";
-        assert_eq!(solve_part1(&line).unwrap(), 1);
+        assert_eq!(solve_part1_puzzle(&line).unwrap(), 1);
     }
 
     #[test]
     fn test_case5_part1() {
         let line = "Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36";
-        assert_eq!(solve_part1(&line).unwrap(), 0);
+        assert_eq!(solve_part1_puzzle(&line).unwrap(), 0);
     }
 
     #[test]
     fn test_case6_part1() {
         let line = "Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
-        assert_eq!(solve_part1(&line).unwrap(), 0);
+        assert_eq!(solve_part1_puzzle(&line).unwrap(), 0);
     }
 
     #[test]
     fn test_part1() {
-        assert_eq!(solve_puzzle(1).unwrap(), 20_107)
+        assert_eq!(solve_day4_puzzle(&1).unwrap(), 20_107)
     }
 
     #[test]
     fn test_part2_small() {
         let input = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\n Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\n Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\n Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\n Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36\n Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
-        assert_eq!(solve_part2(&input).unwrap(), 30)
+        assert_eq!(solve_part2_puzzle(&input).unwrap(), 30)
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(solve_puzzle(2).unwrap(), 8_172_507)
+        assert_eq!(solve_day4_puzzle(&2).unwrap(), 8_172_507)
     }
 }

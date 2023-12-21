@@ -1,3 +1,4 @@
+use std::time::Instant;
 use std::{
     cmp::{max, min},
     collections::HashMap,
@@ -6,27 +7,31 @@ use std::{
 use regex::Regex;
 
 fn main() {
-    match solve_puzzle(2) {
-        Ok(sum) => println!("Total: {sum}"),
+    let start = Instant::now();
+    match solve_day3_puzzle(&2) {
+        Ok(result) => println!("Total: {result}"),
         Err(e) => eprintln!("Error: {:?}", e),
     }
+    let end = Instant::now();
+    let elapsed = end - start;
+    println!("Execution time: {elapsed:?}");
 }
 
-fn solve_puzzle(part: u8) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_day3_puzzle(part: &u8) -> Result<u32, Box<dyn std::error::Error>> {
     let input = std::fs::read_to_string("day3_data.txt")?;
     let mut schema = Vec::new();
     for line in input.lines() {
         schema.push(line);
     }
-    let sum = if part == 1 {
-        solve_part1(&schema)?
+    let sum = if *part == 1 {
+        solve_part1_puzzle(&schema)?
     } else {
-        solve_part2(&schema)?
+        solve_part2_puzzle(&schema)?
     };
     Ok(sum)
 }
 
-fn solve_part1(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_part1_puzzle(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
     let mut sum: u32 = 0;
 
     let re = Regex::new(r"\d+")?;
@@ -65,7 +70,7 @@ fn contains_symbol(s: &str, symbols: &str) -> bool {
     s.chars().any(|c| symbols.contains(*&c))
 }
 
-fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_part2_puzzle(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
     let mut sum: u32 = 0;
     let mut gears: HashMap<(u32, u32), Vec<u32>> = HashMap::new();
 
@@ -128,7 +133,7 @@ fn solve_part2(schema: &Vec<&str>) -> Result<u32, Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod test {
-    use crate::{solve_part1, solve_part2, solve_puzzle};
+    use crate::{solve_day3_puzzle, solve_part1_puzzle, solve_part2_puzzle};
 
     #[test]
     fn test_extra_small_match_part1() {
@@ -136,7 +141,7 @@ mod test {
         schema.push("467.");
         schema.push("...*");
         schema.push("..35");
-        assert_eq!(solve_part1(&schema).unwrap(), 467 + 35)
+        assert_eq!(solve_part1_puzzle(&schema).unwrap(), 467 + 35)
     }
 
     #[test]
@@ -145,7 +150,7 @@ mod test {
         schema.push(".114..");
         schema.push("......");
         schema.push("..633.");
-        assert_eq!(solve_part1(&schema).unwrap(), 0)
+        assert_eq!(solve_part1_puzzle(&schema).unwrap(), 0)
     }
 
     #[test]
@@ -155,7 +160,7 @@ mod test {
         schema.push("...*......");
         schema.push("..35..633.");
         schema.push("......#...");
-        assert_eq!(solve_part1(&schema).unwrap(), 467 + 35 + 633)
+        assert_eq!(solve_part1_puzzle(&schema).unwrap(), 467 + 35 + 633)
     }
 
     #[test]
@@ -172,14 +177,14 @@ mod test {
         schema.push("...$.*....");
         schema.push(".664.598..");
         assert_eq!(
-            solve_part1(&schema).unwrap(),
+            solve_part1_puzzle(&schema).unwrap(),
             467 + 35 + 633 + 617 + 592 + 755 + 664 + 598
         )
     }
 
     #[test]
     fn test_part1() {
-        assert_eq!(solve_puzzle(1).unwrap(), 536_576);
+        assert_eq!(solve_day3_puzzle(&1).unwrap(), 536_576);
     }
 
     #[test]
@@ -195,11 +200,11 @@ mod test {
         schema.push("......755.");
         schema.push("...$.*....");
         schema.push(".664.598..");
-        assert_eq!(solve_part2(&schema).unwrap(), 467_835)
+        assert_eq!(solve_part2_puzzle(&schema).unwrap(), 467_835)
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(solve_puzzle(2).unwrap(), 75_741_499)
+        assert_eq!(solve_day3_puzzle(&2).unwrap(), 75_741_499)
     }
 }

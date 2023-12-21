@@ -1,30 +1,35 @@
 use std::collections::HashMap;
 
 use regex::Regex;
+use std::time::Instant;
 
 fn main() {
-    match solve_puzzle(2) {
-        Ok(sum) => println!("Total: {sum}"),
+    let start = Instant::now();
+    match solve_day2_puzzle(&2) {
+        Ok(result) => println!("Total: {result}"),
         Err(e) => eprintln!("Error: {:?}", e),
     }
+    let end = Instant::now();
+    let elapsed = end - start;
+    println!("Execution time: {elapsed:?}");
 }
 
-fn solve_puzzle(part: u8) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_day2_puzzle(part: &u8) -> Result<u32, Box<dyn std::error::Error>> {
     let input = std::fs::read_to_string("day2_data.txt")?;
     let mut sum = 0;
 
     for line in input.lines() {
-        let number = if part == 1 {
-            solve_part1(line)?
+        let number = if *part == 1 {
+            solve_part1_puzzle(line)?
         } else {
-            solve_part2(line)?
+            solve_part2_puzzle(line)?
         };
         sum += number
     }
     Ok(sum)
 }
 
-fn solve_part1(scorecard: &str) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_part1_puzzle(scorecard: &str) -> Result<u32, Box<dyn std::error::Error>> {
     // return game number if the game is impossible, else return 0
     let game_number = extract_game_number(scorecard)?;
     match is_valid_scorecard(scorecard) {
@@ -69,7 +74,7 @@ fn is_valid_scorecard(scorecard: &str) -> Result<bool, Box<dyn std::error::Error
     Ok(true)
 }
 
-fn solve_part2(scorecard: &str) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_part2_puzzle(scorecard: &str) -> Result<u32, Box<dyn std::error::Error>> {
     //     // return the product of the minimum number of cuber needed for each color to have a valid
     //     // scorecard
     let mut power = 1;
@@ -91,75 +96,75 @@ fn solve_part2(scorecard: &str) -> Result<u32, Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod test {
-    use crate::{solve_part1, solve_part2, solve_puzzle};
+    use crate::{solve_day2_puzzle, solve_part1_puzzle, solve_part2_puzzle};
 
     #[test]
     fn test_one_part1() {
         let game = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green";
-        assert_eq!(solve_part1(game).unwrap(), 1)
+        assert_eq!(solve_part1_puzzle(game).unwrap(), 1)
     }
 
     #[test]
     fn test_two_part1() {
         let game = "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue";
-        assert_eq!(solve_part1(game).unwrap(), 2)
+        assert_eq!(solve_part1_puzzle(game).unwrap(), 2)
     }
 
     #[test]
     fn test_three_part1() {
         let game = "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red";
-        assert_eq!(solve_part1(game).unwrap(), 0)
+        assert_eq!(solve_part1_puzzle(game).unwrap(), 0)
     }
 
     #[test]
     fn test_four_part1() {
         let game = "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red";
-        assert_eq!(solve_part1(game).unwrap(), 0)
+        assert_eq!(solve_part1_puzzle(game).unwrap(), 0)
     }
 
     #[test]
     fn test_five_part1() {
         let game = "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
-        assert_eq!(solve_part1(game).unwrap(), 5)
+        assert_eq!(solve_part1_puzzle(game).unwrap(), 5)
     }
 
     #[test]
     fn test_part1() {
-        assert_eq!(solve_puzzle(1).unwrap(), 2006)
+        assert_eq!(solve_day2_puzzle(&1).unwrap(), 2006)
     }
 
     #[test]
     fn test_one_part2() {
         let game = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green";
-        assert_eq!(solve_part2(game).unwrap(), 48)
+        assert_eq!(solve_part2_puzzle(game).unwrap(), 48)
     }
 
     #[test]
     fn test_two_part2() {
         let game = "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue";
-        assert_eq!(solve_part2(game).unwrap(), 12)
+        assert_eq!(solve_part2_puzzle(game).unwrap(), 12)
     }
 
     #[test]
     fn test_three_part2() {
         let game = "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red";
-        assert_eq!(solve_part2(game).unwrap(), 1560)
+        assert_eq!(solve_part2_puzzle(game).unwrap(), 1560)
     }
 
     #[test]
     fn test_four_part2() {
         let game = "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red";
-        assert_eq!(solve_part2(game).unwrap(), 630)
+        assert_eq!(solve_part2_puzzle(game).unwrap(), 630)
     }
 
     #[test]
     fn test_five_part2() {
         let game = "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
-        assert_eq!(solve_part2(game).unwrap(), 36)
+        assert_eq!(solve_part2_puzzle(game).unwrap(), 36)
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(solve_puzzle(2).unwrap(), 84911)
+        assert_eq!(solve_day2_puzzle(&2).unwrap(), 84911)
     }
 }

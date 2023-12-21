@@ -1,21 +1,33 @@
 use std::fmt;
+use std::time::Instant;
 
-fn solve_puzzle(part: i8) -> Result<u32, Box<dyn std::error::Error>> {
+fn main() {
+    let start = Instant::now();
+    match solve_day1_puzzle(&2) {
+        Ok(result) => println!("Total: {result}"),
+        Err(e) => eprintln!("Error: {:?}", e),
+    }
+    let end = Instant::now();
+    let elapsed = end - start;
+    println!("Execution time: {elapsed:?}");
+}
+
+fn solve_day1_puzzle(part: &i8) -> Result<u32, Box<dyn std::error::Error>> {
     let input = std::fs::read_to_string("day1_data.txt")?;
     let mut sum: u32 = 0;
 
     for line in input.lines() {
-        let number = if part == 1 {
-            solve_part1(line)?
+        let number = if *part == 1 {
+            solve_part1_puzzle(line)?
         } else {
-            solve_part2(line)?
+            solve_part2_puzzle(line)?
         };
         sum += number;
     }
     Ok(sum)
 }
 
-fn solve_part1(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_part1_puzzle(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
     let first = first_digit(&line)?;
     let reversed: String = line.chars().rev().collect();
     let last = first_digit(&reversed)?;
@@ -29,7 +41,7 @@ fn first_digit(s: &str) -> Result<char, OutOfRangeError> {
     s.chars().find(|c| c.is_digit(10)).ok_or(OutOfRangeError)
 }
 
-fn solve_part2(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
+fn solve_part2_puzzle(line: &str) -> Result<u32, Box<dyn std::error::Error>> {
     let first = extract_digits(&line, false)?;
     let reversed: String = line.chars().rev().collect();
     let last = extract_digits(&reversed, true)?;
@@ -91,59 +103,52 @@ impl fmt::Display for OutOfRangeError {
 // Implementing the Error trait.
 impl std::error::Error for OutOfRangeError {}
 
-fn main() {
-    match solve_puzzle(2) {
-        Ok(sum) => println!("Total: {sum}"),
-        Err(e) => eprintln!("Error: {:?}", e),
-    }
-}
-
 #[cfg(test)]
 mod test {
-    use crate::{solve_part2, solve_puzzle};
+    use crate::{solve_day1_puzzle, solve_part2_puzzle};
 
     #[test]
     fn test_one() {
-        assert_eq!(solve_part2("two1nine").unwrap(), 29);
+        assert_eq!(solve_part2_puzzle("two1nine").unwrap(), 29);
     }
 
     #[test]
     fn test_two() {
-        assert_eq!(solve_part2("eightwothree").unwrap(), 83);
+        assert_eq!(solve_part2_puzzle("eightwothree").unwrap(), 83);
     }
 
     #[test]
     fn test_three() {
-        assert_eq!(solve_part2("abcone2threexyz").unwrap(), 13);
+        assert_eq!(solve_part2_puzzle("abcone2threexyz").unwrap(), 13);
     }
 
     #[test]
     fn test_four() {
-        assert_eq!(solve_part2("xtwone3four").unwrap(), 24);
+        assert_eq!(solve_part2_puzzle("xtwone3four").unwrap(), 24);
     }
 
     #[test]
     fn test_five() {
-        assert_eq!(solve_part2("4nineeightseven2").unwrap(), 42);
+        assert_eq!(solve_part2_puzzle("4nineeightseven2").unwrap(), 42);
     }
 
     #[test]
     fn test_six() {
-        assert_eq!(solve_part2("zoneight234").unwrap(), 14);
+        assert_eq!(solve_part2_puzzle("zoneight234").unwrap(), 14);
     }
 
     #[test]
     fn test_seven() {
-        assert_eq!(solve_part2("7pqrstsixteen").unwrap(), 76);
+        assert_eq!(solve_part2_puzzle("7pqrstsixteen").unwrap(), 76);
     }
 
     #[test]
     fn test_part1() {
-        assert_eq!(solve_puzzle(1).unwrap(), 54_304)
+        assert_eq!(solve_day1_puzzle(&1).unwrap(), 54_304)
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(solve_puzzle(2).unwrap(), 54_418)
+        assert_eq!(solve_day1_puzzle(&2).unwrap(), 54_418)
     }
 }

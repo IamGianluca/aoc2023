@@ -2,7 +2,7 @@ use std::time::Instant;
 
 fn main() {
     let start = Instant::now();
-    match solve_puzzle(&2) {
+    match solve_day5_puzzle(&2) {
         Ok(result) => println!("Total: {result}"),
         Err(e) => eprintln!("Error: {:?}", e),
     }
@@ -11,13 +11,13 @@ fn main() {
     println!("Execution time: {elapsed:?}");
 }
 
-fn solve_puzzle(part: &u8) -> Result<u64, Box<dyn std::error::Error>> {
+fn solve_day5_puzzle(part: &u8) -> Result<u64, Box<dyn std::error::Error>> {
     let input = std::fs::read_to_string("day5_data.txt")?;
-    let result = solve_part1(&input, part)?;
+    let result = solve_puzzle(&input, part)?;
     Ok(result)
 }
 
-fn solve_part1(input: &str, part: &u8) -> Result<u64, Box<dyn std::error::Error>> {
+fn solve_puzzle(input: &str, part: &u8) -> Result<u64, Box<dyn std::error::Error>> {
     let first_line = input.lines().next().ok_or("Could not return first line")?;
 
     // extract seed numbers from first line
@@ -130,23 +130,23 @@ fn extract_seeds_part2(text: &str) -> Vec<u64> {
 
 #[cfg(test)]
 mod test {
-    use crate::{solve_part1, solve_puzzle};
+    use crate::{solve_day5_puzzle, solve_puzzle};
 
     #[test]
     fn test_simple_part_1() {
         let input = "seeds: 79 14 55 13\n\nseed-to-soil map:\n50 98 2\n52 50 48\n\nsoil-to-fertilizer map:\n0 15 37\n37 52 2\n39 0 15\n\nfertilizer-to-water map:\n49 53 8\n0 11 42\n42 0 7\n57 7 4\n\nwater-to-light map:\n88 18 7\n18 25 70\n\nlight-to-temperature map:\n45 77 23\n81 45 19\n68 64 13\n\ntemperature-to-humidity map:\n0 69 1\n1 0 69\n\nhumidity-to-location map:\n60 56 37\n56 93 4";
-        assert_eq!(solve_part1(input, &1).unwrap(), 35)
+        assert_eq!(solve_puzzle(input, &1).unwrap(), 35)
     }
 
     #[test]
     fn test_part_1() {
-        assert_eq!(solve_puzzle(&1).unwrap(), 157_211_394)
+        assert_eq!(solve_day5_puzzle(&1).unwrap(), 157_211_394)
     }
 
     #[test]
     fn test_simple_part_2() {
         let input = "seeds: 79 14 55 13\n\nseed-to-soil map:\n50 98 2\n52 50 48\n\nsoil-to-fertilizer map:\n0 15 37\n37 52 2\n39 0 15\n\nfertilizer-to-water map:\n49 53 8\n0 11 42\n42 0 7\n57 7 4\n\nwater-to-light map:\n88 18 7\n18 25 70\n\nlight-to-temperature map:\n45 77 23\n81 45 19\n68 64 13\n\ntemperature-to-humidity map:\n0 69 1\n1 0 69\n\nhumidity-to-location map:\n60 56 37\n56 93 4";
-        assert_eq!(solve_part1(input, &2).unwrap(), 46)
+        assert_eq!(solve_puzzle(input, &2).unwrap(), 46)
     }
 
     // commented out due to long execution time
