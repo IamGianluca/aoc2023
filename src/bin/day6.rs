@@ -77,7 +77,7 @@ mod test {
     #[test]
     fn test_split() {
         let input = "Time:      7  15   30";
-        assert_eq!(get_after_colon(input).unwrap(), "71530")
+        assert_eq!(get_after_colon(input).unwrap(), "71_530")
     }
 
     #[test]
